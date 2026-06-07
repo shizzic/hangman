@@ -1,37 +1,67 @@
 # frozen_string_literal: true
 
+require_relative 'lib/player'
+
 # Hangman cmd game
 class Hangman
-  def initialize
-    words = File.readlines './google-10000-english-no-swears.txt'
-    self.word = words[rand(0..9999)].chomp.strip
+  UNGUESSED_CHAR = '_'
+  MAX_TRIES = 6
 
-    self.letters = Array.new(word.size, '_')
-    self.guesses_left = (word.size * 1.5).ceil
+  def initialize
+    choose_random_word # word
+
+    self.letters = UNGUESSED_CHAR * word.size # correctly guessed letters
+    self.guesses_left = MAX_TRIES
+    self.player = Player.new
   end
 
   def start
     greet_and_explain
     to_s
+
+    until guesses_left.zero? || word == letters
+      letter = player.guess
+      open_letter(letter)
+
+      to_s
+    end
+
+    puts
+    puts word == letters ? 'You won!' : 'You lost.'
   end
 
   private
 
-  attr_accessor :word, :letters, :guesses_left
+  attr_accessor :word, :letters, :guesses_left, :player
+
+  def open_letter(target_letter)
+    puts
+
+    word.chars.each_with_index do |letter, index|
+      next unless letter == target_letter && letters[index] == UNGUESSED_CHAR
+
+      puts 'Success'
+      return letters[index] = letter
+    end
+
+    puts 'Wrong.'
+    puts "The target word doesn't have #{target_letter} in itself in current state."
+    self.guesses_left -= 1
+  end
 
   def choose_random_word
     words = File.readlines './google-10000-english-no-swears.txt'
 
     loop do
-      word = words[rand(0..9999)].chomp.strip
-      return word if (5..12).cover?(word.size)
+      word = words[rand(0..9999)].chomp.strip.downcase
+      break self.word = word if (5..12).cover?(word.size)
     end
   end
 
   def to_s
     puts <<~TEXT
 
-      #{letters.join ' '}
+      #{letters.chars.join ' '}
       Guesses left: #{guesses_left}
     TEXT
   end
