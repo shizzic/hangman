@@ -1,19 +1,19 @@
 # frozen_string_literal: true
 
 # Player of hangman game
-class Player
+module Player
   def guess
-    try = 0
+    tried = false
 
     loop do
       puts
-      puts 'Input must be a letter: a-z (case insensetive).' unless try.zero?
+      puts 'Input must be a letter: a-z (case insensetive).' if tried == true
       print 'Your guess: '
 
       input = gets.chomp.strip.downcase
       return input if ('a'..'z').cover?(input)
 
-      try += 1
+      tried = true
     end
   end
 end

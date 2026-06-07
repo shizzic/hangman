@@ -1,9 +1,15 @@
 # frozen_string_literal: true
 
 require_relative 'lib/player'
+require_relative 'lib/saving'
+
+ROOT = __dir__
 
 # Hangman cmd game
 class Hangman
+  include Player
+  include Saving
+
   UNGUESSED_CHAR = '_'
   MAX_TRIES = 6
 
@@ -12,7 +18,6 @@ class Hangman
 
     self.letters = UNGUESSED_CHAR * word.size # correctly guessed letters
     self.guesses_left = MAX_TRIES
-    self.player = Player.new
   end
 
   def start
@@ -20,19 +25,20 @@ class Hangman
     to_s
 
     until guesses_left.zero? || word == letters
-      letter = player.guess
+      save_game if wanna_save? # ask player if he wants to save
+
+      letter = guess
       open_letter(letter)
 
       to_s
     end
 
-    puts
-    puts word == letters ? 'You won!' : 'You lost.'
+    declare
   end
 
   private
 
-  attr_accessor :word, :letters, :guesses_left, :player
+  attr_accessor :word, :letters, :guesses_left
 
   def open_letter(target_letter)
     puts
@@ -76,6 +82,11 @@ class Hangman
       2. You will see how many guesses left after each turn.
       3. You will see all correctly guessed letters after each turn.
     TEXT
+  end
+
+  def declare
+    puts
+    puts word == letters ? 'You won!' : 'You lost.'
   end
 end
 
