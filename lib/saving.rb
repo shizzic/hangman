@@ -10,6 +10,23 @@ module Saving
 
   attr_accessor :prompt
 
+  def wanna_load_save?
+    self.prompt = TTY::Prompt.new
+
+    puts
+    prompt.select('Wanna load a save?') do |menu|
+      menu.choice 'No', false
+      menu.choice 'Yes', true
+    end
+  end
+
+  def load_save
+    puts
+    prompt.select('Which save to load?') do |menu|
+      Dir.glob("#{ROOT}/saves/*.yaml").reverse_each { |file| menu.choice File.basename(file, '.yaml') }
+    end
+  end
+
   def wanna_save?
     self.prompt = TTY::Prompt.new
 
