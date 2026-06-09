@@ -11,11 +11,13 @@ Command-line Hangman game written in Ruby.
 
 ## Requirements
 
-- Ruby
-- [tty-prompt](https://github.com/piotrmurach/tty-prompt) gem
+- Ruby 4.0.4
+- Bundler
+
+## Installation
 
 ```
-gem install tty-prompt
+bundle install
 ```
 
 ## Usage
