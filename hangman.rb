@@ -21,7 +21,7 @@ class Hangman
   end
 
   def start
-    greet_and_explain
+    saves? && wanna_load_save? ? load_save : greet_and_explain
     to_s
 
     until guesses_left.zero? || word == letters

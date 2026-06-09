@@ -22,9 +22,15 @@ module Saving
 
   def load_save
     puts
-    prompt.select('Which save to load?') do |menu|
-      Dir.glob("#{ROOT}/saves/*.yaml").reverse_each { |file| menu.choice File.basename(file, '.yaml') }
+    path_to_save = prompt.select('Which save to load?') do |menu|
+      Dir.glob("#{ROOT}/saves/*.yaml").reverse_each { |path| menu.choice File.basename(path, '.yaml'), path }
     end
+
+    data = YAML.load_file(path_to_save)
+
+    self.guesses_left = data[:guesses_left]
+    self.letters = data[:letters]
+    self.word = data[:word]
   end
 
   def wanna_save?
@@ -46,4 +52,6 @@ module Saving
   end
 
   def generate_save_name = "#{letters} | Guesses left: #{guesses_left} | #{Time.now.strftime('%d.%m.%Y %H:%M:%S')}"
+
+  def saves? = Dir.glob("#{ROOT}/saves/*.yaml").any?
 end
